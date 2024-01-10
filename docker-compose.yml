@@ -1,0 +1,25 @@
+version: '3.7'
+
+services:
+
+  front-app:
+    container_name: test_front
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      VUE_APP_API_BASEURL: ${VUE_APP_API_BASEURL}
+      VUE_APP_API: ${VUE_APP_API}
+      VUE_APP_BASE_URL: ${VUE_APP_BASE_URL}
+    command: sh -c "npm install --legacy-peer-deps && chown -R node /app/node_modules && npm run dev --host"
+    volumes:
+      - '.:/app'
+      - '/app/node_modules'
+    expose:
+      - 3000
+    tty: true
+
+networks:
+  default:
+    external:
+      name: sail
