@@ -14,7 +14,6 @@
           @click="goToRoute('/books/list')"
         >
           <v-icon>mdi-book</v-icon>
-
           <span>Livros</span>
         </v-btn>
 
@@ -23,7 +22,6 @@
           @click="goToRoute('/authors/list')"
         >
           <v-icon>mdi-account-supervisor</v-icon>
-
           <span>Autores</span>
         </v-btn>
 
@@ -31,7 +29,7 @@
           value="nearby"
           @click="goToRoute('/subjects/list')"
         >
-
+          <v-icon>mdi-text</v-icon>
           <span>Assuntos</span>
         </v-btn>
 
@@ -40,7 +38,6 @@
           @click="generateRelatorio()"
         >
           <v-icon>mdi-file-pdf-box</v-icon>
-
           <span>Relatório</span>
         </v-btn>
       </v-bottom-navigation>
