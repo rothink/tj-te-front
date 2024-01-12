@@ -2,12 +2,12 @@
 
 - Clonar repositório
   >
-        git clone https://github.com/rothink/tj-te-back.git
+        git clone https://github.com/rothink/tj-te-front.git
 
 
 - Entrar no repositório clonado
   >
-        cd tj-te-back
+        cd tj-te-front
 
 
 - Subir os serviços com docker
