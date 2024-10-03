@@ -10,13 +10,13 @@
         cd tj-te-front
 
 
-- Subir os serviços com docker
+- Buildar e subir os serviços com docker
   >
-        docker-compose up --build -d
+        make install
 
 
 - go to page
   >
-        http://172.23.0.2:3000/
+        http://172.24.0.2:3000/
 
         
