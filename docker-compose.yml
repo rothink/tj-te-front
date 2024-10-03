@@ -2,8 +2,8 @@ version: '3.7'
 
 services:
 
-  front-app:
-    container_name: test_front
+  front.app:
+    container_name: front.app
     build:
       context: .
       dockerfile: Dockerfile
