@@ -14,7 +14,6 @@ export default class Api {
         status: true,
         data: res.data,
       })).catch((err) =>
-        // notification.showErrors(err);
         ({
           status: false,
           error: err.message,
@@ -140,6 +139,12 @@ export default class Api {
   }
 
   fail(error: any) {
+    Swal.fire({
+      icon: "error",
+      title: error.response.data.message,
+      showConfirmButton: false,
+      timer: 8000
+    });
     return {
       ok: false,
       error,
