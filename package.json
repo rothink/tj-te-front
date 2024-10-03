@@ -10,11 +10,13 @@
     "@mdi/font": "7.0.96",
     "axios": "^1.6.5",
     "roboto-fontface": "*",
-    "sweetalert2": "^11.10.3",
+    "sweetalert2": "^11.6.13",
+    "vee-validate": "^4.13.2",
     "vue": "^3.3.0",
     "vue-currency-input": "^3.0.5",
     "vue-router": "^4.2.5",
-    "vuetify": "^3.0.0"
+    "vuetify": "^3.0.0",
+    "yup": "^1.4.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.5.0",
