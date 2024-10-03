@@ -11,9 +11,9 @@
       cols="4"
     >
       <v-sheet class="ma-2 pa-2">
-        <h2 class="text-h2 font-weight-black">
+        <h3 class="text-h5 font-weight-black">
           Assuntos
-        </h2>
+        </h3>
       </v-sheet>
     </v-col>
     <v-col
@@ -112,39 +112,72 @@
           </v-btn>
         </v-toolbar-items>
       </v-toolbar>
-      <v-form>
+      <Form
+        as="v-form"
+        :validation-schema="rules"
+        v-slot="{meta}"
+      >
+        {{ validateForm(meta) }}
         <v-container>
           <v-row>
             <v-col
               cols="12"
               md="4"
             >
-              <v-text-field
+              <Field
+                name="descricao"
                 v-model="form.descricao"
-                :counter="20"
-                label="Descrição"
-                required
-                hide-details
-              ></v-text-field>
+                type="text"
+                v-slot="{ field, errors }"
+              >
+                <v-text-field
+                  v-model="form.descricao"
+                  v-bind="field"
+                  variant="outlined"
+                  :error-messages="errors"
+                  label="Descrição"
+                  required
+                  class="required"
+                ></v-text-field>
+              </Field>
             </v-col>
           </v-row>
         </v-container>
-      </v-form>
+      </Form>
     </v-card>
   </v-dialog>
 </template>
 <script setup>
 import {onMounted, reactive, ref} from "vue";
 import Swal from 'sweetalert2'
+import * as yup from 'yup';
+import {Field, Form} from 'vee-validate';
+
 import Api from '../../api/Subject'
 
 const items = ref([]);
 const dialog = ref(false);
 const isUpdate = ref(false);
+const isValidForm = ref(false);
 
 const form = reactive({
   descricao: '',
 });
+
+const rules = yup.object({
+  descricao: yup
+    .string()
+    .min(3, 'Campo deve ter no mínimo 3 caracteres')
+    .max(255, 'Campo de ter no máximo 255 caracteres')
+    .required('Campo obrigatório')
+})
+
+const validateForm = (meta) => {
+  isValidForm.value = false
+  if (meta.dirty && meta.valid) {
+    isValidForm.value = true
+  }
+}
 
 onMounted(async () => {
   await getAll()
@@ -184,8 +217,7 @@ const save = async () => {
   if (form.id) {
     const {ok} = await Api.update(form.id, form);
     if (ok) {
-      await Api.getAll()
-      dialog.value = false;
+      await getAll();
       Swal.fire({
         icon: "success",
         title: "Atualizado com sucesso",
@@ -197,17 +229,16 @@ const save = async () => {
   } else {
     const {ok} = await Api.save(form);
     if (ok) {
-      await Api.getAll()
-      dialog.value = false;
+      await getAll();
       Swal.fire({
         icon: "success",
         title: "Salvo com sucesso",
         showConfirmButton: false,
         timer: 1500
       });
-
     }
   }
+  dialog.value = false;
 
 }
 

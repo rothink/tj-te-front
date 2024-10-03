@@ -11,9 +11,9 @@
       cols="4"
     >
       <v-sheet class="ma-2 pa-2">
-        <h2 class="text-h2 font-weight-black">
+        <h5 class="text-h5 font-weight-black">
           Autores
-        </h2>
+        </h5>
       </v-sheet>
     </v-col>
     <v-col
@@ -112,39 +112,75 @@
           </v-btn>
         </v-toolbar-items>
       </v-toolbar>
-      <v-form>
+
+      <Form
+        as="v-form"
+        :validation-schema="rules"
+        v-slot="{meta}"
+      >
+        {{ validateForm(meta) }}
         <v-container>
           <v-row>
             <v-col
               cols="12"
               md="4"
             >
-              <v-text-field
+              <Field
+                name="nome"
                 v-model="form.nome"
-                :counter="10"
-                label="Nome"
-                required
-                hide-details
-              ></v-text-field>
+                type="text"
+                v-slot="{ field, errors }"
+              >
+                <v-text-field
+                  v-model="form.nome"
+                  v-bind="field"
+                  variant="outlined"
+                  :error-messages="errors"
+                  label="Nome"
+                  required
+                  class="required"
+                ></v-text-field>
+              </Field>
             </v-col>
           </v-row>
         </v-container>
-      </v-form>
+      </Form>
     </v-card>
   </v-dialog>
 </template>
 <script setup>
+
+
 import {onMounted, reactive, ref} from "vue";
 import Swal from 'sweetalert2'
+import * as yup from 'yup';
+import {Field, Form} from 'vee-validate';
+
 import Api from '../../api/Author'
 
 const items = ref([]);
 const dialog = ref(false);
 const isUpdate = ref(false);
+const isValidForm = ref(false);
 
 const form = reactive({
-  name: '',
+  nome: '',
 });
+
+const rules = yup.object({
+  nome: yup
+    .string()
+    .min(3, 'Campo deve ter no mínimo 3 caracteres')
+    .max(255, 'Campo de ter no máximo 255 caracteres')
+    .required('Campo obrigatório')
+})
+
+const validateForm = (meta) => {
+  isValidForm.value = false
+  if (meta.dirty && meta.valid) {
+    isValidForm.value = true
+  }
+}
 
 onMounted(async () => {
   await getAll()
@@ -184,29 +220,27 @@ const save = async () => {
   if (form.id) {
     const {ok} = await Api.update(form.id, form);
     if (ok) {
-      dialog.value = false;
+      await getAll()
       Swal.fire({
         icon: "success",
         title: "Atualizado com sucesso",
         showConfirmButton: false,
         timer: 1500
       });
-      await Api.getAll()
     }
   } else {
     const {ok} = await Api.save(form);
     if (ok) {
-      dialog.value = false;
+      await getAll()
       Swal.fire({
         icon: "success",
         title: "Salvo com sucesso",
         showConfirmButton: false,
         timer: 1500
       });
-      await Api.getAll()
     }
   }
-
+  dialog.value = false;
 }
 
 </script>

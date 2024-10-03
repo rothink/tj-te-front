@@ -11,9 +11,9 @@
       cols="4"
     >
       <v-sheet class="ma-2 pa-2">
-        <h2 class="text-h2 font-weight-black">
+        <h5 class="text-h5 font-weight-black">
           Livros
-        </h2>
+        </h5>
       </v-sheet>
     </v-col>
     <v-col
@@ -126,57 +126,103 @@
           </v-btn>
         </v-toolbar-items>
       </v-toolbar>
-      <v-form>
+      <Form
+        as="v-form"
+        :validation-schema="rules"
+        v-slot="{meta}"
+      >
+        {{ validateForm(meta) }}
         <v-container>
           <v-row>
             <v-col
               cols="12"
               md="4"
             >
-              <v-text-field
+              <Field
+                name="titulo"
                 v-model="form.titulo"
-                :counter="40"
-                label="Título"
-                required
-              ></v-text-field>
+                type="text"
+                v-slot="{ field, errors }"
+              >
+                <v-text-field
+                  v-model="form.titulo"
+                  v-bind="field"
+                  variant="outlined"
+                  :error-messages="errors"
+                  required
+                  type="text"
+                  label="Título"
+                />
+              </Field>
             </v-col>
             <v-col
               cols="12"
               md="4"
             >
-              <v-text-field
+              <Field
+                name="editora"
                 v-model="form.editora"
-                :counter="40"
-                label="Editora"
-                required
-              ></v-text-field>
+                type="text"
+                v-slot="{ field, errors }"
+              >
+                <v-text-field
+                  v-model="form.editora"
+                  v-bind="field"
+                  variant="outlined"
+                  :error-messages="errors"
+                  required
+                  type="text"
+                  label="Editora"
+                />
+              </Field>
             </v-col>
             <v-col
               cols="12"
               md="4"
             >
-              <v-text-field
+              <Field
+                name="edicao"
                 v-model="form.edicao"
-                label="Edição"
-                required
-              ></v-text-field>
+                type="text"
+                v-slot="{ field, errors }"
+              >
+                <v-text-field
+                  v-model="form.edicao"
+                  v-bind="field"
+                  variant="outlined"
+                  :error-messages="errors"
+                  required
+                  type="text"
+                  label="Edição"
+                />
+              </Field>
             </v-col>
             <v-col
               cols="12"
               md="4"
             >
-              <v-text-field
+              <Field
+                name="anoPublicacao"
                 v-model="form.anoPublicacao"
-                :counter="4"
-                label="Ano publicação"
-                required
-              ></v-text-field>
+                type="text"
+                v-slot="{ field, errors }"
+              >
+                <v-text-field
+                  v-model="form.anoPublicacao"
+                  v-bind="field"
+                  variant="outlined"
+                  :error-messages="errors"
+                  required
+                  type="text"
+                  label="Ano publicação"
+                />
+              </Field>
             </v-col>
             <v-col
               cols="12"
               md="4"
             >
-              <VCurrencyField v-model="form.valor"/>
+              <VCurrencyField v-model="form.valor" label="Valor" name="valor" variant="outlined"/>
             </v-col>
             <v-col
               cols="12"
@@ -212,19 +258,23 @@
             </v-col>
           </v-row>
         </v-container>
-      </v-form>
+      </Form>
     </v-card>
   </v-dialog>
 </template>
 <script setup>
 import {onMounted, reactive, ref} from "vue";
-import VCurrencyField from '../../components/VCurrencyField'
+import * as yup from 'yup';
+import {Field, Form} from 'vee-validate';
 import Swal from 'sweetalert2'
+
+import VCurrencyField from '../../components/VCurrencyField'
 import Api from '../../api/Book'
 
 const items = ref([]);
 const dialog = ref(false);
 const isUpdate = ref(false);
+const isValidForm = ref(false);
 
 const author = ref('');
 const subject = ref('');
@@ -242,6 +292,43 @@ const form = reactive({
   subject_id: [],
 });
 
+const rules = yup.object({
+  titulo: yup
+    .string()
+    .min(3, 'Campo deve ter no mínimo 3 caracteres')
+    .max(255, 'Campo de ter no máximo 255 caracteres')
+    .required('Campo obrigatório'),
+  editora: yup
+    .string()
+    .min(3, 'Campo deve ter no mínimo 3 caracteres')
+    .max(255, 'Campo de ter no máximo 255 caracteres')
+    .required('Campo obrigatório'),
+  edicao: yup
+    .number()
+    .typeError('Apenas números')
+    .required('Campo obrigatório'),
+  anoPublicacao: yup
+    .number()
+    .typeError('Apenas números')
+    .required('Campo obrigatório'),
+  valor: yup
+    .string()
+    .required('Campo obrigatório'),
+  author_id: yup
+    .string()
+    .required('Campo obrigatório'),
+  subject_id: yup
+    .string()
+    .required('Campo obrigatório'),
+})
+
+const validateForm = (meta) => {
+  isValidForm.value = false
+  if (meta.dirty && meta.valid) {
+    isValidForm.value = true
+  }
+}
+
 onMounted(async () => {
   await getAll()
   await preRequisite()
@@ -249,8 +336,8 @@ onMounted(async () => {
 
 const preRequisite = async () => {
   const {data} = await Api.preRequisite();
-  authorsList.value = data.data.preRequisite.authors
-  subjectsList.value = data.data.preRequisite.subjects
+  authorsList.value = await data.data.preRequisite.authors
+  subjectsList.value = await data.data.preRequisite.subjects
 
 
 }
@@ -266,7 +353,7 @@ const editItem = async (id) => {
     anoPublicacao: data.data.anoPublicacao,
     valor: data.data.valor,
     author_id: data.data.authors.map((author) => author.author_id),
-    subject_d: data.data.subjects.map((subject) => subject.subject_id),
+    subject_id: data.data.subjects.map((subject) => subject.subject_id),
   })
   dialog.value = true
 }
@@ -280,7 +367,7 @@ const addItem = async () => {
     anoPublicacao: null,
     valor: null,
     author_id: [],
-    subject_d: []
+    subject_id: []
   })
   dialog.value = true
 }
@@ -301,29 +388,27 @@ const save = async () => {
   if (form.id) {
     const {ok} = await Api.update(form.id, form);
     if (ok) {
-      dialog.value = false;
       Swal.fire({
         icon: "success",
         title: "Atualizado com sucesso",
         showConfirmButton: false,
         timer: 1500
       });
-      await Api.getAll()
+      await getAll()
     }
   } else {
     const {ok} = await Api.save(form);
     if (ok) {
-      dialog.value = false;
       Swal.fire({
         icon: "success",
         title: "Salvo com sucesso",
         showConfirmButton: false,
         timer: 1500
       });
-      await Api.getAll()
+      await getAll()
     }
   }
-
+  dialog.value = false;
 }
 
 </script>
