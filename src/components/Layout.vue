@@ -51,6 +51,7 @@
           <v-col
             cols="12"
             md="2"
+            class="d-none d-md-block"
           >
             <v-sheet
               rounded="lg"
@@ -79,6 +80,7 @@
           <v-col
             cols="12"
             md="2"
+            class="d-none d-md-block"
           >
             <v-sheet
               rounded="lg"
