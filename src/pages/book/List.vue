@@ -296,12 +296,12 @@ const rules = yup.object({
   titulo: yup
     .string()
     .min(3, 'Campo deve ter no mínimo 3 caracteres')
-    .max(255, 'Campo de ter no máximo 255 caracteres')
+    .max(40, 'Campo de ter no máximo 40 caracteres')
     .required('Campo obrigatório'),
   editora: yup
     .string()
     .min(3, 'Campo deve ter no mínimo 3 caracteres')
-    .max(255, 'Campo de ter no máximo 255 caracteres')
+    .max(4040, 'Campo de ter no máximo 40 caracteres')
     .required('Campo obrigatório'),
   edicao: yup
     .number()

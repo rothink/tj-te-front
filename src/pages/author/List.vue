@@ -139,6 +139,8 @@
                   label="Nome"
                   required
                   class="required"
+                  counter="40"
+                  aria-valuemax="40"
                 ></v-text-field>
               </Field>
             </v-col>
@@ -171,7 +173,7 @@ const rules = yup.object({
   nome: yup
     .string()
     .min(3, 'Campo deve ter no mínimo 3 caracteres')
-    .max(255, 'Campo de ter no máximo 255 caracteres')
+    .max(40, 'Campo de ter no máximo 40 caracteres')
     .required('Campo obrigatório')
 })
 
